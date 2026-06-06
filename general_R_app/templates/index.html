@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rheology Property Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* Deeper gradient for a professional, high-end feel */
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .main-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 1600px;
+        }
+        .section-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s;
+        }
+        h2 { letter-spacing: -1px; color: #1a2a6c; }
+        .result-box {
+            background: #ffffff;
+            border-left: 5px solid #6a11cb;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .btn-generate {
+            background: #6a11cb;
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px;
+            border: none;
+            transition: background 0.3s;
+        }
+        .btn-generate:hover { background: #4a0e8c; }
+        .input-group-text { border-radius: 0 8px 8px 0 !important; background: #2a5298 !important; }
+        input.form-control { border-radius: 8px 0 0 8px !important; }
+    </style>
+</head>
+<body>
+    <div class="main-card">
+        <h2 class="text-center fw-bold">An Intelligent Ensemble Framework for Uncertainty-Quantified Rheological Characterization</h2>
+        
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="section-card">
+                    <h5 class="fw-bold mb-3 text-secondary">Parameters</h5>
+                    <form action="/predict" method="POST">
+                        <div class="row g-3">
+                            {% set features = [
+                                {'id': 'C', 'label': 'Cement', 'unit': 'kg/m^3'}, {'id': 'W', 'label': 'Water', 'unit': 'kg/m^3'},
+                                {'id': 'S', 'label': 'Sand', 'unit': 'kg/m^3'}, {'id': 'G', 'label': 'Gravel', 'unit': 'kg/m^3'},
+                                {'id': 'SF', 'label': 'Silica Fume', 'unit': 'kg/m^3'}, {'id': 'FA', 'label': 'Fly Ash', 'unit': 'kg/m^3'},
+                                {'id': 'LS', 'label': 'Lime Stone', 'unit': 'kg/m^3'}, {'id': 'SP', 'label': 'Superplasticizer', 'unit': 'kg/m^3'},
+                                {'id': 'TM', 'label': 'Time After Mixing', 'unit': 'minutes'}
+                            ] %}
+                            {% for f in features %}
+                            <div class="col-md-4">
+                                <label class="small fw-semibold text-dark">{{ f.label }}</label>
+                                <div class="input-group">
+                                    <input type="number" step="any" class="form-control form-control-sm" name="{{ f.id }}" 
+                                           value="{{ single_results.inputs[f.id] if single_results else '' }}" required>
+                                    <span class="input-group-text text-white small">{{ f.unit }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-generate w-100 mt-4">Predict Results</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="section-card h-100">
+                    <h5 class="fw-bold mb-3 text-secondary">Output</h5>
+                    {% if single_results %}
+                    <div class="result-box">
+                        <div class="text-primary fw-bold">Plastic Viscosity (PV): <br><span class="h3">{{ "%.3f"|format(single_results.pv) }}</span> <small>Pa·s</small></div>
+                        <hr>
+                        <div class="text-primary fw-bold">Yield Stress (DYS): <br><span class="h3">{{ "%.3f"|format(single_results.dys) }}</span> <small>Pa</small></div>
+                    </div>
+                    {% else %}
+                    <div class="text-center mt-5 text-muted small">Ready for input...</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 pt-3 border-top text-secondary small">
+            Built by <strong>Farhad</strong>, <strong>Javad</strong>, & <strong>Vahab</strong>
+        </div>
+    </div>
+</body>
+</html>
